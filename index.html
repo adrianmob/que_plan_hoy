@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Que plan hoy</title>
+     <!-- Compiled and minified CSS -->
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+     <link rel='stylesheet' href='http://materializecss.com/extras/noUiSlider/nouislider.css'>
+
+     <!-- Estilos principales-->
+     <link rel="stylesheet" href="css/estilos.css">
+     <!--iconos-->
+     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+ 
+</head>
+<body>
+    <header id="header"></header>
+    <main>
+        <div class="principal">
+            <h5 class="titulo">Agregar nuevo proveedor</h5>
+            <div class="row">
+                    <div class="input-field col s6">
+                      <input id="nombre" type="text" class="validate">
+                      <label for="nombre">Nombre del comercio</label>
+                    </div>
+                    <div class="input-field col s6">
+                      <input id="telefono" type="number" class="validate">
+                      <label for="telefono">Telefono</label>
+                    </div>
+            </div>
+            <div class="row">
+                <div class="col s2">
+                    <label>
+                        <input class="filled-in" type="checkbox" checked="checked" />
+                        <span>Lunes</span>
+                      </label>
+                </div>
+                <div class="col s2">
+                    <label>
+                        <input class="filled-in" type="checkbox" checked="checked" />
+                        <span>Martes</span>
+                      </label>
+                </div> <div class="col s2">
+                    <label>
+                        <input class="filled-in" type="checkbox" checked="checked" />
+                        <span>Miercoles</span>
+                      </label>
+                </div> <div class="col s2">
+                    <label>
+                        <input class="filled-in" type="checkbox" checked="checked" />
+                        <span>Jueves</span>
+                      </label>
+                </div> <div class="col s2">
+                    <label>
+                        <input class="filled-in" type="checkbox" checked="checked" />
+                        <span>Viernes</span>
+                      </label>
+                </div> <div class="col s2">
+                    <label>
+                        <input class="filled-in" type="checkbox" checked="checked" />
+                        <span>Sabado</span>
+                      </label>
+                </div> <div class="col s2">
+                    <label>
+                        <input class="filled-in" type="checkbox" checked="checked" />
+                        <span>Domingo</span>
+                      </label>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="input-field col s6">
+                    <input id="hora_inicio" type="text" class="timepicker">
+                    <label for="hora_inicio">Hora de inicio</label>
+                </div>
+                <div class="input-field col s6">
+                    <input id="hora_fin" type="text" class="timepicker">
+                    <label for="hora_fin">Hora de fin</label>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="input-field col s12">
+                    <textarea id="descripcion" class="materialize-textarea"></textarea>
+                    <label for="descripcion">Descripcion</label>
+                </div>  
+            </div>
+
+            <div class="row">
+                <div class="col s12">
+                    <p>Rango de precios</p>
+                    <div id="range"></div>
+            
+                </div>  
+            </div>
+
+            <div class="row">
+                <div class="file-field input-field col s12">
+                    <div class="btn" onchange="foto(true)">
+                        <span>Escoger banner publicitario</span>
+                        <input class="data" type="file" id="portada_file">
+                    </div>
+                    <div class="file-path-wrapper">
+                        <input class="file-path validate" type="text">
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col s12">
+                    <img id="imgLogo" src="assets/imgs/no-image.png" class="responsive-img" alt="logo">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="input-field col s12">
+                    <input id="direccion" type="text" class="validate">
+                    <input id="lat" type="number" hidden>
+                    <input id="long" type="number" hidden>
+                    <label for="direccion">Dirección</label>
+                </div>
+                <div id="mapa"></div>
+
+            </div>
+
+            <div class="row">
+                <div class="col s12">
+                    <a id="guardar" onclick="guardar()" class="waves-effect waves-light btn">Guardar</a>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script
+    src="https://code.jquery.com/jquery-3.4.1.min.js"
+    integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+    crossorigin="anonymous"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.9.1/firebase.js"></script>
+    <script>
+        var firebaseConfig = {
+            apiKey: "AIzaSyD6E1OZ3wbsIlxnHeTDrXV0w-TopjYd5FI",
+            authDomain: "queplanhoy-6b17e.firebaseapp.com",
+            databaseURL: "https://queplanhoy-6b17e.firebaseio.com",
+            projectId: "queplanhoy-6b17e",
+            storageBucket: "queplanhoy-6b17e.appspot.com",
+            messagingSenderId: "846548466969",
+            appId: "1:846548466969:web:34846487045eda102fd988",
+            measurementId: "G-XJQK79HHEL"        
+        };
+        firebase.initializeApp(firebaseConfig);
+        </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script>
+     <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyART95YfqwUaAY5gtVQbIe_R-N34fFnczQ&libraries=places" async defer></script>
+    <script src='js/mapa.js'></script>
+    <script src='http://materializecss.com/extras/noUiSlider/nouislider.js'></script>
+        <script>
+        var header = document.getElementById("header");
+        var req = new XMLHttpRequest();
+        req.open("GET", "menu.html", false);
+        req.send(null);
+        header.innerHTML = req.responseText; 
+        
+        $(function () {
+            $('.timepicker').timepicker();
+            var slider = document.getElementById('range');
+            noUiSlider.create(slider, {
+                start: [0, 500],
+                connect: true,
+                step: 10,
+                orientation: 'horizontal',
+                range: {
+                    'min': 0,
+                    'max': 3000
+                    },
+                format: wNumb({
+                    decimals: 0
+                })
+            });
+  });
+        
+        function guardar()
+        {
+            var slider = document.getElementById('range');
+
+            let rango = slider.noUiSlider.get();
+
+            let body = 
+            {
+                nombre : $('#nombre').val(),
+                telefono: $('#telefono').val(),
+                hora_inicio: $('#hora_inicio').val(),
+                hora_fin: $('#hora_fin').val(),
+                descripcion: $('#descripcion').val(),
+                direccion: $('#direccion').val(),
+                lat: $('#lat').val(),
+                lng: $('#long').val(),
+                rango: {
+                    min: rango[0],
+                    max: rango[1]
+                },
+                image: $('#imgLogo').attr('src'),
+                dias_trabajados: 
+                {
+                    l: $('.filled-in')[0].checked,
+                    m: $('.filled-in')[1].checked,
+                    mi: $('.filled-in')[2].checked,
+                    j: $('.filled-in')[3].checked,
+                    v: $('.filled-in')[4].checked,
+                    s: $('.filled-in')[5].checked,
+                    d: $('.filled-in')[6].checked,
+
+                }
+
+
+            };
+
+            console.log(body);
+
+            firebase.database().ref('comercios/').push(body);
+            Swal.fire({
+                        type: 'success',
+                        title: 'Muy bien',
+                        text: 'Comercio guardado'
+            });
+        }
+
+        function foto(logo){
+
+            var foto = document.getElementById("portada_file");
+            if(foto.files.length > 0){
+                var reader = new FileReader();
+                reader.onload = function (e){
+                    var img = document.getElementById("imgLogo");
+                    img.setAttribute("src",e.target.result);
+                };
+                reader.readAsDataURL(foto.files[0]);
+            }
+        }
+
+    
+
+    </script>
+
+
+    
+</body>
+</html>

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Que plan hoy</title>
+     <!-- Compiled and minified CSS -->
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+     <!-- Estilos principales-->
+     <link rel="stylesheet" href="css/estilos.css">
+     <!--iconos-->
+     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+ 
+</head>
+<body>
+    <header id="header"></header>
+    <main>
+        <div class="principal">
+            <h5 class="titulo">Anuncios</h5>
+
+            <div class="row">
+                <div class="input-field col s12">
+                    <select id="select_negocios" onchange="showBloque()">
+                        <option value="" disabled selected>Escoge una categoria</option>
+                    </select>
+                    <label>Negocio</label>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="input-field col s6">
+                    <select id="dia_promocion">
+                        <option value="" disabled selected>Escoge una opcion</option>
+                        <option value="1">Lunes</option>
+                        <option value="2">Martes</option>
+                        <option value="3">Miercoles</option>
+                        <option value="4">Jueves</option>
+                        <option value="5">Viernes</option>
+                        <option value="6">Sabados</option>
+                        <option value="7">Domingos</option>
+                        <option value="0">Base</option>
+                    </select>                    
+                    <label>Dia promocion</label>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="file-field input-field col s12">
+                    <div class="btn" onchange="foto(true)">
+                        <span>Escoger banner publicitario</span>
+                        <input class="data" type="file" id="portada_file">
+                    </div>
+                    <div class="file-path-wrapper">
+                        <input class="file-path validate" type="text">
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col s12">
+                    <img id="imgLogo" src="assets/imgs/no-image.png" class="responsive-img" alt="logo">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col s12">
+                    <a id="guardar" onclick="guardar()" class="waves-effect waves-light btn">Guardar</a>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script
+    src="https://code.jquery.com/jquery-3.4.1.min.js"
+    integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+    crossorigin="anonymous"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.9.1/firebase.js"></script>
+    <script>
+        var firebaseConfig = {
+            apiKey: "AIzaSyD6E1OZ3wbsIlxnHeTDrXV0w-TopjYd5FI",
+            authDomain: "queplanhoy-6b17e.firebaseapp.com",
+            databaseURL: "https://queplanhoy-6b17e.firebaseio.com",
+            projectId: "queplanhoy-6b17e",
+            storageBucket: "queplanhoy-6b17e.appspot.com",
+            messagingSenderId: "846548466969",
+            appId: "1:846548466969:web:34846487045eda102fd988",
+            measurementId: "G-XJQK79HHEL"        
+        };
+        firebase.initializeApp(firebaseConfig);
+        </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script>
+     <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyART95YfqwUaAY5gtVQbIe_R-N34fFnczQ&libraries=places" async defer></script>
+    <script src='js/mapa.js'></script>
+    <script>
+        var header = document.getElementById("header");
+        var req = new XMLHttpRequest();
+        req.open("GET", "menu.html", false);
+        req.send(null);
+        header.innerHTML = req.responseText; 
+        
+        $(function () {
+            $('.timepicker').timepicker();
+
+            let element = $('#select_negocios')[0];
+            
+            firebase.database().ref("comercios/").once("value",(data)=>{
+                objetoCat = data.val();
+                var node;
+                while (element.firstChild) {
+                    element.removeChild(element.firstChild);
+                }       
+                for (const key in objetoCat) {
+                    node = document.createElement("OPTION");
+                    node.innerHTML = objetoCat[key]['nombre'];
+                    node.setAttribute("value",key);
+                    element.add(node);
+                
+                }
+                var select = document.querySelectorAll('select');
+                var selectInst = M.FormSelect.init(select);
+                show_anuncio();
+            });
+ 
+        });
+
+        function show_anuncio()
+        {     
+            let key = $('#select_negocios').val();
+            firebase.database().ref("anuncios/" + key).once("value",(data)=>{
+                if ( data.val() )
+                {
+
+                }
+            });
+
+
+        }
+
+
+        function foto(logo){
+
+            var foto = document.getElementById("portada_file");
+            if(foto.files.length > 0){
+                var reader = new FileReader();
+                reader.onload = function (e){
+                    var img = document.getElementById("imgLogo");
+                    img.setAttribute("src",e.target.result);
+                };
+                reader.readAsDataURL(foto.files[0]);
+            }
+        }
+
+        function guardar()
+        {
+            let key = $('#select_negocios').val();
+            let body = 
+            {
+                image: $('#imgLogo').attr('src'),
+                dia: $('#dia_promocion').val()
+            };
+
+            firebase.database().ref('anuncios/'+key).push(body);
+            Swal.fire({
+                        type: 'success',
+                        title: 'Muy bien',
+                        text: 'Anuncio guardado'
+            });
+        }
+
+    
+
+    </script>
+
+</body>
+</html>
