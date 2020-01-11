@@ -42,6 +42,19 @@ main {
   right: 20px;
 }
 
+#carousel
+{
+  height: 440px!important;
+}
+
+.carousel .indicators .indicator-item {
+  background-color: rgba(0, 0, 0, 0.5)!important;
+}
+
+.carousel .indicators .indicator-item.active {
+  background-color: #000!important;
+}
+
 
 
   @media only screen and (max-width : 992px) {

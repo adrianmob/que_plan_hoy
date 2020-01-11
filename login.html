@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Que plan hoy</title>
+    <link rel="stylesheet" href="css/login.css">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="contenedor">
+        <h3 class="encabezado">Bienvenido</h3>
+        <div class="logo">
+            <img src="assets/imgs/logo.jpeg" alt="Que_plan_hoy">
+        </div>
+        <div class="formulario">
+            <div class="input">
+                <input class="inputElement" type="email" name="email" id="email" >
+                <span class="spanInput">Email</span>
+            </div>
+            <div class="input">
+                    <input class="inputElement" type="password" name="password" id="pass">
+                    <span class="spanInput">Password</span>
+            </div>
+        </div>
+        <div class="contBoton">
+            <button class="boton" onclick="entrar(event)">Entrar</button>
+        </div>
+    </div>
+    <script src="https://www.gstatic.com/firebasejs/5.9.1/firebase.js"></script>
+    <script>
+        var firebaseConfig = {
+            apiKey: "AIzaSyD6E1OZ3wbsIlxnHeTDrXV0w-TopjYd5FI",
+            authDomain: "queplanhoy-6b17e.firebaseapp.com",
+            databaseURL: "https://queplanhoy-6b17e.firebaseio.com",
+            projectId: "queplanhoy-6b17e",
+            storageBucket: "queplanhoy-6b17e.appspot.com",
+            messagingSenderId: "846548466969",
+            appId: "1:846548466969:web:34846487045eda102fd988",
+            measurementId: "G-XJQK79HHEL"        
+        };
+        firebase.initializeApp(firebaseConfig);
+        </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script>
+
+    <script src="js/login.js"></script>
+    <script src="js/check.js"></script>
+
+</body>
+</html>

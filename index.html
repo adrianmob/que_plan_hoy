@@ -19,7 +19,7 @@
     <header id="header"></header>
     <main>
         <div class="principal">
-            <h5 class="titulo">Agregar nuevo proveedor</h5>
+            <h5 class="titulo">Agregar nuevo aliado</h5>
             <div class="row">
                     <div class="input-field col s6">
                       <input id="nombre" type="text" class="validate">
@@ -71,20 +71,31 @@
             </div>
 
             <div class="row">
-                <div class="input-field col s6">
+                <div class="input-field col s4">
                     <input id="hora_inicio" type="text" class="timepicker">
                     <label for="hora_inicio">Hora de inicio</label>
                 </div>
-                <div class="input-field col s6">
+                <div class="input-field col s4">
                     <input id="hora_fin" type="text" class="timepicker">
                     <label for="hora_fin">Hora de fin</label>
+                </div>
+                <div class="col s4">
+                    <label>
+                        <input id="servicio_dom" class="filled-in" type="checkbox" checked="checked" />
+                        <span>Servicio a domicilio</span>
+                      </label>
                 </div>
             </div>
 
             <div class="row">
-                <div class="input-field col s12">
+                <div class="input-field col s9">
                     <textarea id="descripcion" class="materialize-textarea"></textarea>
                     <label for="descripcion">Descripcion</label>
+                </div>  
+                <div class="input-field col s3">
+                    <select id="ciudad">
+                    </select>
+                    <label for="ciudad">Ciudad</label>
                 </div>  
             </div>
 
@@ -152,13 +163,18 @@
         };
         firebase.initializeApp(firebaseConfig);
         </script>
+    <script src="https://cdn.firebase.com/libs/geofire/5.0.1/geofire.min.js"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script>
+    <script src="js/check.js"></script>
      <!-- Compiled and minified JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyART95YfqwUaAY5gtVQbIe_R-N34fFnczQ&libraries=places" async defer></script>
     <script src='js/mapa.js'></script>
     <script src='http://materializecss.com/extras/noUiSlider/nouislider.js'></script>
-        <script>
+    <script>
+        var firebaseRef = firebase.database().ref('comercios_ubicacion');
+        var geoFire = new geofire.GeoFire(firebaseRef);
         var header = document.getElementById("header");
         var req = new XMLHttpRequest();
         req.open("GET", "menu.html", false);
@@ -181,7 +197,29 @@
                     decimals: 0
                 })
             });
-  });
+
+            let element = $('#ciudad')[0];
+
+            firebase.database().ref("ciudades/").once("value",(data)=>{
+                objetoCiu = data.val();
+                var node;
+                while (element.firstChild) {
+                    element.removeChild(element.firstChild);
+                }       
+                for ( const key in objetoCiu ) {
+                    node = document.createElement("OPTION");
+                    node.innerHTML = objetoCiu[key]['nombre'];
+                    node.setAttribute("value",key);
+                    element.add(node);
+                
+                }
+                var select = document.querySelectorAll('select');
+                var selectInst = M.FormSelect.init(select);
+
+            });
+           
+           
+        });
         
         function guardar()
         {
@@ -191,42 +229,56 @@
 
             let body = 
             {
-                nombre : $('#nombre').val(),
-                telefono: $('#telefono').val(),
-                hora_inicio: $('#hora_inicio').val(),
-                hora_fin: $('#hora_fin').val(),
-                descripcion: $('#descripcion').val(),
-                direccion: $('#direccion').val(),
-                lat: $('#lat').val(),
-                lng: $('#long').val(),
+                nombre :                $('#nombre').val(),
+                telefono:               $('#telefono').val(),
+                hora_inicio:            $('#hora_inicio').val(),
+                hora_fin:               $('#hora_fin').val(),
+                descripcion:            $('#descripcion').val(),
+                direccion:              $('#direccion').val(),
+                lat:                    $('#lat').val(),
+                lng:                    $('#long').val(),
+                ciudad :                $('#ciudad').val(),
                 rango: {
                     min: rango[0],
                     max: rango[1]
                 },
-                image: $('#imgLogo').attr('src'),
+                image:                  $('#imgLogo').attr('src'),
                 dias_trabajados: 
                 {
-                    l: $('.filled-in')[0].checked,
-                    m: $('.filled-in')[1].checked,
+                    l:  $('.filled-in')[0].checked,
+                    m:  $('.filled-in')[1].checked,
                     mi: $('.filled-in')[2].checked,
-                    j: $('.filled-in')[3].checked,
-                    v: $('.filled-in')[4].checked,
-                    s: $('.filled-in')[5].checked,
-                    d: $('.filled-in')[6].checked,
+                    j:  $('.filled-in')[3].checked,
+                    v:  $('.filled-in')[4].checked,
+                    s:  $('.filled-in')[5].checked,
+                    d:  $('.filled-in')[6].checked,
 
                 }
 
 
             };
 
-            console.log(body);
+            firebase.database().ref('comercios/').push(body).then(data=>{
+                data.key;
+                let 
+                lat = Number(body.lat), 
+                lng = Number(body.lng);
 
-            firebase.database().ref('comercios/').push(body);
-            Swal.fire({
+                geoFire.set(data.key, [lat,lng]).then(function() 
+                {
+                    console.log("exito");
+                    Swal.fire({
                         type: 'success',
                         title: 'Muy bien',
                         text: 'Comercio guardado'
+                    });
+                }, 
+                function(error) {
+                    console.log("Error: " + error);
+                });
             });
+
+        
         }
 
         function foto(logo){

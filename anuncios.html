@@ -21,12 +21,25 @@
 
             <div class="row">
                 <div class="input-field col s12">
-                    <select id="select_negocios" onchange="showBloque()">
+                    <select id="select_negocios" onchange="showSlides()">
                         <option value="" disabled selected>Escoge una categoria</option>
                     </select>
                     <label>Negocio</label>
                 </div>
             </div>
+
+            <div class="row">
+                <div class="col s12">
+                    <div class="carousel carousel-slider" id="carousel">
+                            <div class="carousel-fixed-item center">
+                                    <a class="btn waves-effect white grey-text darken-text-2" onclick="eliminar()">Editar</a>
+                                    <a class="btn waves-effect white grey-text darken-text-2" onclick="eliminar()">Eliminar</a>
+                            </div>
+                    </div>
+                </div>
+            </div>
+
+           
 
 
             <div class="row">
@@ -94,8 +107,6 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script>
      <!-- Compiled and minified JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyART95YfqwUaAY5gtVQbIe_R-N34fFnczQ&libraries=places" async defer></script>
-    <script src='js/mapa.js'></script>
     <script>
         var header = document.getElementById("header");
         var req = new XMLHttpRequest();
@@ -123,23 +134,10 @@
                 }
                 var select = document.querySelectorAll('select');
                 var selectInst = M.FormSelect.init(select);
-                show_anuncio();
+                showSlides();
             });
- 
+
         });
-
-        function show_anuncio()
-        {     
-            let key = $('#select_negocios').val();
-            firebase.database().ref("anuncios/" + key).once("value",(data)=>{
-                if ( data.val() )
-                {
-
-                }
-            });
-
-
-        }
 
 
         function foto(logo){
@@ -170,6 +168,49 @@
                         title: 'Muy bien',
                         text: 'Anuncio guardado'
             });
+        }
+
+        function showSlides()
+        {
+            let $aliado = document.getElementById('carousel');
+            let id = document.getElementById('select_negocios').value;
+
+            firebase.database().ref("anuncios/"+id).once("value",(data)=>{
+                let slides = data.val();
+                
+                while ($aliado.children.length > 1) {
+                    $aliado.removeChild($aliado.lastChild);
+                }       
+                for (const key in slides) {
+
+                    node = document.createElement("A");
+                    node.setAttribute("class","carousel-item");
+                    node.innerHTML = `<img src="${ slides[key]['image'] }">`;
+                    $aliado.appendChild(node);
+                
+                }
+                debugger;
+
+                if ( data.val() )
+                {
+                    $('.carousel').carousel({
+                        fullWidth: true,
+                        indicators: true,
+                        noWrap: true
+                    }); 
+                }
+
+                var select = document.querySelectorAll('select');
+                var selectInst = M.FormSelect.init(select);
+
+            });
+        }
+
+        function eliminar()
+        {
+            var instance = M.Carousel.getInstance($('#carousel'));
+
+            console.log(instance.center);
         }
 
     
